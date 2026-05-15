@@ -1,0 +1,40 @@
+meta {
+  name: POST:/restaurants/
+  type: http
+  seq: 6
+}
+
+post {
+  url: {{baseUrl}}/restaurants/
+  body: json
+  auth: inherit
+}
+
+headers {
+  : 
+}
+
+body:json {
+    {
+      "name": "Yakitori Alley",
+      "address": "123 Shinjuku St, Tokyo",
+      "cuisine": "Japanese",
+      "description": "Cosy grilled skewer bar tucked in a back alley",
+      "priceRange": 2,
+      "phoneNumber": "+81-3-1234-5678",
+      "website": "https://yakitorially.com",
+      "latitude": 35.6938,
+      "longitude": 139.7034
+    }
+  
+}
+
+vars:pre-request {
+  : 
+  id: dd0ddc5a-ad02-42e2-850b-0e528c9cc74a
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

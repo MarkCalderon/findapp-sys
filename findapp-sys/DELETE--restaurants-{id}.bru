@@ -1,0 +1,25 @@
+meta {
+  name: DELETE:/restaurants/{id}
+  type: http
+  seq: 5
+}
+
+delete {
+  url: {{baseUrl}}/restaurants/{{id}}
+  body: json
+  auth: inherit
+}
+
+headers {
+  : 
+}
+
+vars:pre-request {
+  : 
+  id: dd0ddc5a-ad02-42e2-850b-0e528c9cc74a
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

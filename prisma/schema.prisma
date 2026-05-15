@@ -13,7 +13,7 @@ datasource db {
 }
 
 model Restaurant {
-  id          Int               @id @default(autoincrement())
+  id          String            @id @default(uuid())
   name        String
   address     String?
   cuisine     String?
@@ -30,7 +30,7 @@ model Restaurant {
 }
 
 model User {
-  id        Int         @id @default(autoincrement())
+  id        String      @id @default(uuid())
   email     String      @unique
   firstName String
   lastName  String
@@ -43,7 +43,7 @@ model User {
 }
 
 model Photo {
-  id          Int               @id @default(autoincrement())
+  id          String            @id @default(uuid())
   url         String
   mimeType    String
   photoTypeId Int
@@ -65,8 +65,8 @@ model PhotoType {
 
 model RestaurantPhoto {
   id           Int        @id @default(autoincrement())
-  restaurantId Int
-  photoId      Int
+  restaurantId String
+  photoId      String
 
   restaurant   Restaurant @relation(fields: [restaurantId], references: [id])
   photo        Photo      @relation(fields: [photoId], references: [id])
@@ -74,8 +74,8 @@ model RestaurantPhoto {
 
 model UserPhoto {
   id      Int   @id @default(autoincrement())
-  userId  Int
-  photoId Int
+  userId  String
+  photoId String
 
   user    User  @relation(fields: [userId], references: [id])
   photo   Photo @relation(fields: [photoId], references: [id])
