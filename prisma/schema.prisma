@@ -1,0 +1,82 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Restaurant {
+  id          Int               @id @default(autoincrement())
+  name        String
+  address     String?
+  cuisine     String?
+  description String?
+  priceRange  Int?
+  phoneNumber String?
+  website     String?
+  latitude    Float?
+  longitude   Float?
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  photos      RestaurantPhoto[]
+}
+
+model User {
+  id        Int         @id @default(autoincrement())
+  email     String      @unique
+  firstName String
+  lastName  String
+  phoneNumber String?
+  password  String
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  photos    UserPhoto[]
+}
+
+model Photo {
+  id          Int               @id @default(autoincrement())
+  url         String
+  mimeType    String
+  photoTypeId Int
+  fileSize    Int
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  type        PhotoType         @relation(fields: [photoTypeId], references: [id])
+  restaurantPhotos RestaurantPhoto[]
+  userPhotos       UserPhoto[]
+}
+
+model PhotoType {
+  id     Int     @id @default(autoincrement())
+  name   String
+
+  photos Photo[]
+}
+
+model RestaurantPhoto {
+  id           Int        @id @default(autoincrement())
+  restaurantId Int
+  photoId      Int
+
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id])
+  photo        Photo      @relation(fields: [photoId], references: [id])
+}
+
+model UserPhoto {
+  id      Int   @id @default(autoincrement())
+  userId  Int
+  photoId Int
+
+  user    User  @relation(fields: [userId], references: [id])
+  photo   Photo @relation(fields: [photoId], references: [id])
+}
