@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CreateRestaurantDto } from './dto/create-restaurant.dto';
 import { UpdateRestaurantDto } from './dto/update-restaurant.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { CreateRestaurantPhotoDto } from './dto/create-restaurant-photo.dto';
 
 @Injectable()
 export class RestaurantsService {
@@ -20,6 +21,35 @@ export class RestaurantsService {
   findOne(id: string) {
     return this.prisma.restaurant.findUnique({
       where: { id },
+      include: {
+        photos: {
+          include: {
+            photo: true,
+          },
+        },
+      },
+    });
+  }
+
+  addPhoto(
+    restaurantId: string,
+    createRestaurantPhotoDto: CreateRestaurantPhotoDto,
+  ) {
+    return this.prisma.restaurantPhoto.create({
+      data: {
+        restaurant: { connect: { id: restaurantId } },
+        photo: {
+          create: {
+            url: createRestaurantPhotoDto.url,
+            mimeType: createRestaurantPhotoDto.mimeType,
+            fileSize: createRestaurantPhotoDto.fileSize,
+            photoTypeId: createRestaurantPhotoDto.photoTypeId,
+          },
+        },
+      },
+      include: {
+        photo: true,
+      },
     });
   }
 

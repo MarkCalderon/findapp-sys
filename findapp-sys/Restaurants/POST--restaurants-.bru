@@ -1,11 +1,11 @@
 meta {
-  name: PATCH:/restaurants/{id} copy
+  name: POST:/restaurants/
   type: http
-  seq: 4
+  seq: 2
 }
 
-patch {
-  url: {{baseUrl}}/restaurants/{{id}}
+post {
+  url: {{baseUrl}}/restaurants/
   body: json
   auth: inherit
 }

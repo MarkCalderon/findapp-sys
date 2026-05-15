@@ -10,6 +10,7 @@ import {
 import { RestaurantsService } from './restaurants.service';
 import { CreateRestaurantDto } from './dto/create-restaurant.dto';
 import { UpdateRestaurantDto } from './dto/update-restaurant.dto';
+import { CreateRestaurantPhotoDto } from './dto/create-restaurant-photo.dto';
 
 @Controller('restaurants')
 export class RestaurantsController {
@@ -28,6 +29,14 @@ export class RestaurantsController {
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.restaurantsService.findOne(id);
+  }
+
+  @Post(':id/photos')
+  addPhoto(
+    @Param('id') id: string,
+    @Body() createRestaurantPhotoDto: CreateRestaurantPhotoDto,
+  ) {
+    return this.restaurantsService.addPhoto(id, createRestaurantPhotoDto);
   }
 
   @Patch(':id')
