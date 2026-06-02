@@ -1,10 +1,11 @@
 import {
   ConflictException,
   Injectable,
-  NotFoundException,
+  NotFoundException
 } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
+import { ERROR_CODE, ERROR_MESSAGE } from 'src/constants';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -13,10 +14,14 @@ import { UpdateUserDto } from './dto/update-user.dto';
 export class UsersService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(createUserDto: CreateUserDto) {
-    try {
-      const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
+  async findByEmail(email: string) {
+    return this.prisma.user.findUnique({ where: { email } });
+  }
 
+  async create(createUserDto: CreateUserDto) {
+    const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
+
+    try {
       const user = await this.prisma.user.create({
         data: {
           ...createUserDto,
@@ -27,14 +32,15 @@ export class UsersService {
       return userWithoutPassword;
     } catch (error: unknown) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
-        if (error.code === 'P2002') {
-          throw new ConflictException('User with this email already exists');
+        if (String(error.code) === ERROR_CODE.USER_ALREADY_EXISTS) {
+          throw new ConflictException(
+            ERROR_MESSAGE[ERROR_CODE.USER_ALREADY_EXISTS],
+          );
         }
       }
       throw error;
     }
   }
-
   async findAll() {
     const users = await this.prisma.user.findMany();
     return users.map(
@@ -43,22 +49,31 @@ export class UsersService {
   }
 
   async findOne(id: string) {
-    const user = await this.prisma.user.findUnique({
-      where: { id },
-    });
+    try {
+      const user = await this.prisma.user.findUniqueOrThrow({
+        where: { id },
+      });
 
-    if (!user) {
-      throw new NotFoundException('User not found');
+      const { password: _password, ...userWithoutPassword } = user;
+      return userWithoutPassword;
+    } catch (error: unknown) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        if (String(error.code) === ERROR_CODE.USER_NOT_FOUND) {
+          throw new NotFoundException(ERROR_MESSAGE[ERROR_CODE.USER_NOT_FOUND]);
+        }
+      }
+      throw error;
     }
-
-    const { password: _password, ...userWithoutPassword } = user;
-    return userWithoutPassword;
   }
 
   async update(id: string, updateUserDto: UpdateUserDto) {
+    const data = {...updateUserDto};
+    if (data.password) {
+      data.password = await bcrypt.hash(data.password, 10);
+    }
     const user = await this.prisma.user.update({
       where: { id },
-      data: updateUserDto,
+      data: data,
     });
 
     const { password: _password, ...userWithoutPassword } = user;
@@ -66,8 +81,19 @@ export class UsersService {
   }
 
   async remove(id: string) {
-    return await this.prisma.user.delete({
-      where: { id },
-    });
+    try {
+      const user = await this.prisma.user.delete({
+        where: { id },
+      });
+      const { password: _password, ...userWithoutPassword } = user;
+      return userWithoutPassword;
+    } catch (error: unknown) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        if (String(error.code) === ERROR_CODE.USER_NOT_FOUND) {
+          throw new NotFoundException(ERROR_MESSAGE[ERROR_CODE.USER_NOT_FOUND]);
+        }
+      }
+      throw error;
+    }
   }
 }

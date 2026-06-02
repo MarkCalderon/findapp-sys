@@ -1,0 +1,29 @@
+meta {
+  name: GET:/users/{id}
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/users/{{id}}
+  body: none
+  auth: bearer
+}
+
+headers {
+  : 
+}
+
+auth:bearer {
+  token: {{access_token}}
+}
+
+vars:pre-request {
+  : 
+  id: 4d3a9f15-4b6c-4be6-8aaa-f4504393572f
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

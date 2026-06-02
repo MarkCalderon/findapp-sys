@@ -1,17 +1,21 @@
 meta {
-  name: DELETE:/restaurants/{id}
+  name: DELETE:/users/{id}
   type: http
   seq: 3
 }
 
 delete {
-  url: {{baseUrl}}/restaurants/{{id}}
+  url: {{baseUrl}}/users/{{id}}
   body: json
-  auth: inherit
+  auth: bearer
 }
 
 headers {
   : 
+}
+
+auth:bearer {
+  token: {{access_token}}
 }
 
 vars:pre-request {

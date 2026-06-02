@@ -1,13 +1,17 @@
 meta {
-  name: POST:/users
+  name: PATCH:/users/{id}
   type: http
-  seq: 5
+  seq: 4
 }
 
-post {
-  url: {{baseUrl}}/users
+patch {
+  url: {{baseUrl}}/users/{{id}}
   body: json
   auth: bearer
+}
+
+headers {
+  : 
 }
 
 auth:bearer {
@@ -15,12 +19,17 @@ auth:bearer {
 }
 
 body:json {
-  {
+  {    
     "email": "mac.a4@live.com",
     "firstName": "Mark",
     "lastName": "Calderon",
-    "password": "password123"
+    "phoneNumber": null,
   }
+}
+
+vars:pre-request {
+  : 
+  id: dd0ddc5a-ad02-42e2-850b-0e528c9cc74a
 }
 
 settings {
